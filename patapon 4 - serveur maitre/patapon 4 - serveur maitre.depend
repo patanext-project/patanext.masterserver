@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1562878110 source:d:\mateusz\c\patapon 4 - serveur maitre\main.cpp
+	<winsock2.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<cstdlib>
+	<map>
+	"dictionnaire.hpp"
+
+1562871095 source:d:\mateusz\c\patapon 4 - serveur maitre\dictionnaire.cpp
+	<iostream>
+	<string>
+	<vector>
+	<stdio.h>
+	"dictionnaire.hpp"
+
+1562878518 d:\mateusz\c\patapon 4 - serveur maitre\dictionnaire.hpp
+	<iostream>
+	<string>
+	<vector>
+	<stdio.h>
+
