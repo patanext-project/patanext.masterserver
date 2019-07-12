@@ -4,17 +4,18 @@
 
 namespace P4TLBMasterServer
 {
-	enum EventType
-	{
-		Connection,
-		Stream,
-		Disconnection
-	};
-
 	struct ClientServerEvent
 	{
+		enum EventType
+		{
+			Connection,
+			Connected,
+			Stream,
+			Disconnection
+		};
+
 	public:
 		EventType Type;
-		Client Client;
+		int ClientConnectionId;
 	};
 }

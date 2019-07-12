@@ -37,19 +37,24 @@ int main()
 	{
 		ClientServerEvent ev;
 
+		server->Update();
 		while (server->PopEvent(ev))
 		{
 			switch (ev.Type)
 			{
-			case EventType::Connection:
-				std::cout << "Client connected!";
+			case ClientServerEvent::EventType::Connection:
+				std::cout << "Client being connected!\n";
 				
-				server->Accept(ev.Client);
+				server->Accept(ev.ClientConnectionId);
 
 				break;
 
-			case EventType::Stream:
-				std::cout << "Message received!";
+			case ClientServerEvent::EventType::Connected:
+				std::cout << "Client " << ev.ClientConnectionId << " connected.\n";
+				break;
+
+			case ClientServerEvent::EventType::Stream:
+				std::cout << "Message received!\n";
 				break;
 			}
 		}

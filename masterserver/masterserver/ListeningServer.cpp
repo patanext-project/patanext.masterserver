@@ -36,8 +36,9 @@ namespace P4TLBMasterServer
 		errorCode = listen(socketId, 5);
 	}
 
-	bool ListeningServer::PopEvent(ClientServerEvent& event)
+	void ListeningServer::Update()
 	{
+		// Check for client connection...
 		sockaddr address;
 		int addrLen = sizeof(address);
 		auto result = accept(socketId, &address, &addrLen);
@@ -46,33 +47,58 @@ namespace P4TLBMasterServer
 			// Create client
 			Client client;
 			client.ConnectionId = connectionId++;
-			client.Status = ClientStatus::Connecting;
+			client.Status = Client::ClientStatus::Connecting;
 			clients.push_back(client);
 			clientMap.insert(pair<int, Client>(client.ConnectionId, client));
 
 			// We got a connection...
-			event.Type = EventType::Connection;
-			event.Client = client;
+			ClientServerEvent event;
+			event.Type = ClientServerEvent::EventType::Connection;
+			event.ClientConnectionId = client.ConnectionId;
+
+			events.push_back(event);
+		}
+	}
+
+	bool ListeningServer::PopEvent(ClientServerEvent& event)
+	{
+		if (!events.empty())
+		{
+			event = events.front();
+			events.pop_front();
+
 			return true;
 		}
 
 		return false;
 	}
 
-	const list<Client>& ListeningServer::GetClients(ClientStatus status)
+	const list<Client>& ListeningServer::GetClients(Client::ClientStatus status)
 	{
 		return clients;
 	}
 
-	void ListeningServer::Accept(Client client)
+	void ListeningServer::Accept(int connectionId)
 	{
-		auto it = clientMap.find(client.ConnectionId);
+		auto it = clientMap.find(connectionId);
 		if (it == clientMap.end())
 		{
-			std::cout << "No client found with connectionId: " << client.ConnectionId;
+			std::cout << "No client found with connectionId: " << connectionId;
+			return;
 		}
 
-		client = clientMap.find(client.ConnectionId)->second;
+		Client client = clientMap.find(connectionId)->second;
+		if (client.Status == Client::ClientStatus::Connected)
+			return; // ???
+
+		client.Status = Client::ClientStatus::Connected;
+		clientMap.insert_or_assign(connectionId, client);
+
+		ClientServerEvent event;
+		event.Type = ClientServerEvent::EventType::Connected;
+		event.ClientConnectionId = connectionId;
+
+		events.push_back(event);
 	}
 
 	ListeningServer::~ListeningServer()

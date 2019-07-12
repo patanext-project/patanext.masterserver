@@ -21,6 +21,7 @@ namespace P4TLBMasterServer
 		void Bind(int& errorCode);
 		void Listen(int& errorCode);
 
+		void Update();
 		bool PopEvent(ClientServerEvent& event);
 		/// <summary>
 		/// Get the current clients from the server
@@ -29,9 +30,9 @@ namespace P4TLBMasterServer
 		/// <return>
 		/// Read-only list of clients
 		/// </return>
-		const list<Client>& GetClients(ClientStatus wantedStatus = ClientStatus::NoFilter);
+		const list<Client>& GetClients(Client::ClientStatus wantedStatus = Client::ClientStatus::NoFilter);
 
-		void Accept(Client client);
+		void Accept(int connectionId);
 
 		sockaddr_in GetAddress();
 
@@ -41,6 +42,7 @@ namespace P4TLBMasterServer
 
 		int connectionId;
 
+		list<ClientServerEvent> events;
 		list<Client> clients;
 		map<int, Client> clientMap;
 	};
