@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientServerEvent.h" />
     <ClInclude Include="ListeningServer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
