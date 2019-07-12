@@ -16,6 +16,12 @@
     <Filter Include="Fichiers sources\Classes">
       <UniqueIdentifier>{d6527dfe-2c6a-4809-87b9-4accb05cbba2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Requests">
+      <UniqueIdentifier>{00e82a0a-d2b5-46da-b9bc-82197d4815ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Requests">
+      <UniqueIdentifier>{3ec7fbb7-a92c-4bec-b324-d8dd2c2df169}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -30,6 +36,12 @@
     <ClInclude Include="Client.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="msg\GET\GetUserLogin.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="msg\Request.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -39,6 +51,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="ListeningServer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="msg\GET\GetUserLogin.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

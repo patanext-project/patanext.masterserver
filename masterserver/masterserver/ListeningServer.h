@@ -31,6 +31,7 @@ namespace P4TLBMasterServer
 		/// Read-only list of clients
 		/// </return>
 		const list<Client>& GetClients(Client::ClientStatus wantedStatus = Client::ClientStatus::NoFilter);
+		const Client GetClient(int connectionId, bool& exists);
 
 		void Accept(int connectionId);
 

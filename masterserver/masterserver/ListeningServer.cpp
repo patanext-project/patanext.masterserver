@@ -78,6 +78,14 @@ namespace P4TLBMasterServer
 		return clients;
 	}
 
+	const Client ListeningServer::GetClient(int connectionId, bool& exists)
+	{
+		auto it = clientMap.find(connectionId);
+		exists = it == clientMap.end();
+
+		return it->second;
+	}
+
 	void ListeningServer::Accept(int connectionId)
 	{
 		auto it = clientMap.find(connectionId);

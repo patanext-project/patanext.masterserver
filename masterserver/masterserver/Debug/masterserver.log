@@ -1,2 +1,4 @@
-﻿  ListeningServer.cpp
-  masterserver.vcxproj -> C:\Users\guerr\Documents\Projets\Patapon\MasterServer\guerr\masterserver\Debug\masterserver.exe
+﻿  masterserver.cpp
+  GetUserLogin.cpp
+c:\users\guerr\documents\projets\patapon\masterserver\guerr\masterserver\masterserver\msg\get\getuserlogin.cpp(35): fatal error C1010: fin de fichier inattendue lors de la recherche d'un en-tête précompilé. N'auriez-vous pas oublié d'ajouter '#include "pch.h"' à votre source ?
+  Génération de code en cours...

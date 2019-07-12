@@ -6,11 +6,35 @@
 
 #include "ListeningServer.h"
 #include "ClientServerEvent.h"
+#include "msg/Request.h"
+#include "msg/GET/GetUserLogin.h"
+
+#include <list>
 
 using namespace P4TLBMasterServer;
+using namespace P4TLBMasterServerRequests;
+using namespace std;
+
+void addRequest(list<RequestBase*>& list, RequestBase* request)
+{
+	list.push_back(request);
+}
+
+void addRequests(list<RequestBase*>& list)
+{
+	addRequest(list, new GetUserLogin());
+}
 
 int main()
 {
+	list<RequestBase*> requests;
+	addRequests(requests);
+	
+	for (RequestBase* request : requests)
+	{
+		std::cout << "request path: " << request->getPath() << "\n";
+	}
+
     std::cout << "Starting the server!\n";
 
 	int port = 4242;

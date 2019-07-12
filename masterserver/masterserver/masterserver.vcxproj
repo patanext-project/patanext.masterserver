@@ -154,11 +154,14 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientServerEvent.h" />
     <ClInclude Include="ListeningServer.h" />
+    <ClInclude Include="msg\GET\GetUserLogin.h" />
+    <ClInclude Include="msg\Request.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ListeningServer.cpp" />
     <ClCompile Include="masterserver.cpp" />
+    <ClCompile Include="msg\GET\GetUserLogin.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
