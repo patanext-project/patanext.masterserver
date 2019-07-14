@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package P4TLB.MasterServer;
+
+service Authentication
+{
+    rpc SendUserLogin (UserLoginRequest) returns (UserLoginResponse) {}
+    rpc SendUserSignUp (UserSignUpRequest) returns (UserSignUpResponse) {} //< will not be enabled for now
+}
+
+message UserLoginRequest
+{
+    string login = 1;
+    string password = 2; //< need to be hashed before being sent...
+}
+
+message UserLoginResponse
+{
+    /* Error codes:
+     * 0 -> success
+     * 1 -> invalid (we can't say if the password was incorrect or username was incorrect: security reason)
+     */
+    int32 error = 1;
+}
+
+/* For the password part, we will use generated token from a homemade discord bot */
+message UserSignUpRequest
+{
+    string login = 1;
+    string password = 2; //< need to be hashed before being sent...
+}
+
+message UserSignUpResponse
+{
+    /* Error codes:
+     * 0 -> success
+     * 1 -> already existing login
+     */
+    int32 error = 1;
+}
