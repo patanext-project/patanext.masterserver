@@ -26,22 +26,25 @@ namespace P4TLB.MasterServer {
           string.Concat(
             "CiJNZXNzYWdlcy9wcm90by9zZXJ2aWNlX2xvZ2luLnByb3RvEhJQNFRMQi5N",
             "YXN0ZXJTZXJ2ZXIiMwoQVXNlckxvZ2luUmVxdWVzdBINCgVsb2dpbhgBIAEo",
-            "CRIQCghwYXNzd29yZBgCIAEoCSIiChFVc2VyTG9naW5SZXNwb25zZRINCgVl",
-            "cnJvchgBIAEoBSI0ChFVc2VyU2lnblVwUmVxdWVzdBINCgVsb2dpbhgBIAEo",
-            "CRIQCghwYXNzd29yZBgCIAEoCSIjChJVc2VyU2lnblVwUmVzcG9uc2USDQoF",
-            "ZXJyb3IYASABKAUy0wEKDkF1dGhlbnRpY2F0aW9uEl4KDVNlbmRVc2VyTG9n",
-            "aW4SJC5QNFRMQi5NYXN0ZXJTZXJ2ZXIuVXNlckxvZ2luUmVxdWVzdBolLlA0",
-            "VExCLk1hc3RlclNlcnZlci5Vc2VyTG9naW5SZXNwb25zZSIAEmEKDlNlbmRV",
-            "c2VyU2lnblVwEiUuUDRUTEIuTWFzdGVyU2VydmVyLlVzZXJTaWduVXBSZXF1",
-            "ZXN0GiYuUDRUTEIuTWFzdGVyU2VydmVyLlVzZXJTaWduVXBSZXNwb25zZSIA",
-            "YgZwcm90bzM="));
+            "CRIQCghwYXNzd29yZBgCIAEoCSJ6ChFVc2VyTG9naW5SZXNwb25zZRI+CgVl",
+            "cnJvchgBIAEoDjIvLlA0VExCLk1hc3RlclNlcnZlci5Vc2VyTG9naW5SZXNw",
+            "b25zZS5FcnJvckNvZGUiJQoJRXJyb3JDb2RlEgsKB1N1Y2Nlc3MQABILCgdJ",
+            "bnZhbGlkEAEiNAoRVXNlclNpZ25VcFJlcXVlc3QSDQoFbG9naW4YASABKAkS",
+            "EAoIcGFzc3dvcmQYAiABKAkifAoSVXNlclNpZ25VcFJlc3BvbnNlEj8KBWVy",
+            "cm9yGAEgASgOMjAuUDRUTEIuTWFzdGVyU2VydmVyLlVzZXJTaWduVXBSZXNw",
+            "b25zZS5FcnJvckNvZGUiJQoJRXJyb3JDb2RlEgsKB1N1Y2Nlc3MQABILCgdJ",
+            "bnZhbGlkEAEyywEKDkF1dGhlbnRpY2F0aW9uEloKCVVzZXJMb2dpbhIkLlA0",
+            "VExCLk1hc3RlclNlcnZlci5Vc2VyTG9naW5SZXF1ZXN0GiUuUDRUTEIuTWFz",
+            "dGVyU2VydmVyLlVzZXJMb2dpblJlc3BvbnNlIgASXQoKVXNlclNpZ25VcBIl",
+            "LlA0VExCLk1hc3RlclNlcnZlci5Vc2VyU2lnblVwUmVxdWVzdBomLlA0VExC",
+            "Lk1hc3RlclNlcnZlci5Vc2VyU2lnblVwUmVzcG9uc2UiAGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserLoginRequest), global::P4TLB.MasterServer.UserLoginRequest.Parser, new[]{ "Login", "Password" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserLoginResponse), global::P4TLB.MasterServer.UserLoginResponse.Parser, new[]{ "Error" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserLoginResponse), global::P4TLB.MasterServer.UserLoginResponse.Parser, new[]{ "Error" }, null, new[]{ typeof(global::P4TLB.MasterServer.UserLoginResponse.Types.ErrorCode) }, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserSignUpRequest), global::P4TLB.MasterServer.UserSignUpRequest.Parser, new[]{ "Login", "Password" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserSignUpResponse), global::P4TLB.MasterServer.UserSignUpResponse.Parser, new[]{ "Error" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::P4TLB.MasterServer.UserSignUpResponse), global::P4TLB.MasterServer.UserSignUpResponse.Parser, new[]{ "Error" }, null, new[]{ typeof(global::P4TLB.MasterServer.UserSignUpResponse.Types.ErrorCode) }, null)
           }));
     }
     #endregion
@@ -244,14 +247,14 @@ namespace P4TLB.MasterServer {
 
     /// <summary>Field number for the "error" field.</summary>
     public const int ErrorFieldNumber = 1;
-    private int error_;
+    private global::P4TLB.MasterServer.UserLoginResponse.Types.ErrorCode error_ = 0;
     /// <summary>
     /// Error codes:
     /// 0 -> success
     /// 1 -> invalid (we can't say if the password was incorrect or username was incorrect: security reason)
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Error {
+    public global::P4TLB.MasterServer.UserLoginResponse.Types.ErrorCode Error {
       get { return error_; }
       set {
         error_ = value;
@@ -294,7 +297,7 @@ namespace P4TLB.MasterServer {
     public void WriteTo(pb::CodedOutputStream output) {
       if (Error != 0) {
         output.WriteRawTag(8);
-        output.WriteInt32(Error);
+        output.WriteEnum((int) Error);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -305,7 +308,7 @@ namespace P4TLB.MasterServer {
     public int CalculateSize() {
       int size = 0;
       if (Error != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Error);
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Error);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -333,12 +336,24 @@ namespace P4TLB.MasterServer {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            Error = input.ReadInt32();
+            Error = (global::P4TLB.MasterServer.UserLoginResponse.Types.ErrorCode) input.ReadEnum();
             break;
           }
         }
       }
     }
+
+    #region Nested types
+    /// <summary>Container for nested types declared in the UserLoginResponse message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static partial class Types {
+      public enum ErrorCode {
+        [pbr::OriginalName("Success")] Success = 0,
+        [pbr::OriginalName("Invalid")] Invalid = 1,
+      }
+
+    }
+    #endregion
 
   }
 
@@ -541,14 +556,9 @@ namespace P4TLB.MasterServer {
 
     /// <summary>Field number for the "error" field.</summary>
     public const int ErrorFieldNumber = 1;
-    private int error_;
-    /// <summary>
-    /// Error codes:
-    /// 0 -> success
-    /// 1 -> already existing login
-    /// </summary>
+    private global::P4TLB.MasterServer.UserSignUpResponse.Types.ErrorCode error_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Error {
+    public global::P4TLB.MasterServer.UserSignUpResponse.Types.ErrorCode Error {
       get { return error_; }
       set {
         error_ = value;
@@ -591,7 +601,7 @@ namespace P4TLB.MasterServer {
     public void WriteTo(pb::CodedOutputStream output) {
       if (Error != 0) {
         output.WriteRawTag(8);
-        output.WriteInt32(Error);
+        output.WriteEnum((int) Error);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -602,7 +612,7 @@ namespace P4TLB.MasterServer {
     public int CalculateSize() {
       int size = 0;
       if (Error != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Error);
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Error);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -630,12 +640,24 @@ namespace P4TLB.MasterServer {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            Error = input.ReadInt32();
+            Error = (global::P4TLB.MasterServer.UserSignUpResponse.Types.ErrorCode) input.ReadEnum();
             break;
           }
         }
       }
     }
+
+    #region Nested types
+    /// <summary>Container for nested types declared in the UserSignUpResponse message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static partial class Types {
+      public enum ErrorCode {
+        [pbr::OriginalName("Success")] Success = 0,
+        [pbr::OriginalName("Invalid")] Invalid = 1,
+      }
+
+    }
+    #endregion
 
   }
 

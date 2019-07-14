@@ -40,19 +40,34 @@ namespace project
 			}
 			world.GetImplInstance<AuthenticationImpl>().World = world;
 
-
-			var userDbMgr = world.GetOrCreateManager<UserDatabaseManager>();
-			var account = userDbMgr.CreateAccount("guerro", out _);
-			Console.WriteLine($"Init={account}");
-			var byId = userDbMgr.FindById(account.Id);
-			Console.WriteLine($"ById={byId}");
-			var byLogin = userDbMgr.FindById(userDbMgr.GetIdFromLogin(account.Login));
-			Console.WriteLine($"ByLogin={byLogin}");
-			
 			server.Start();
+
+			FindOrCreateAccount(world);
 
 			Console.WriteLine("The server is currently listening...\nPress a key to exit.");
 			Console.ReadKey();
+		}
+
+		// TEST
+		private static void FindOrCreateAccount(World world)
+		{
+			var             userDbMgr = world.GetOrCreateManager<UserDatabaseManager>();
+			DataUserAccount account;
+			
+			// no account with login 'guerro' found
+			if (userDbMgr.GetIdFromLogin("guerro") == 0)
+			{
+				// So create one...
+				account = userDbMgr.CreateAccount("guerro", out var success);
+				
+				Console.WriteLine($"New Account Data: {account}");
+				
+				return;
+			}
+
+			account = userDbMgr.FindById(userDbMgr.GetIdFromLogin("guerro"));
+			
+			Console.Write($"Existing Account Data: {account}");
 		}
 
 		private static IEnumerable<ServerServiceDefinition> SearchServiceImplementations(Dictionary<Type, object> mapInstanceImpl)

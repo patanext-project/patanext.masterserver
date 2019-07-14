@@ -17,17 +17,17 @@ namespace P4TLB.MasterServer {
     static readonly grpc::Marshaller<global::P4TLB.MasterServer.UserSignUpRequest> __Marshaller_P4TLB_MasterServer_UserSignUpRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::P4TLB.MasterServer.UserSignUpRequest.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::P4TLB.MasterServer.UserSignUpResponse> __Marshaller_P4TLB_MasterServer_UserSignUpResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::P4TLB.MasterServer.UserSignUpResponse.Parser.ParseFrom);
 
-    static readonly grpc::Method<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse> __Method_SendUserLogin = new grpc::Method<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse>(
+    static readonly grpc::Method<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse> __Method_UserLogin = new grpc::Method<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "SendUserLogin",
+        "UserLogin",
         __Marshaller_P4TLB_MasterServer_UserLoginRequest,
         __Marshaller_P4TLB_MasterServer_UserLoginResponse);
 
-    static readonly grpc::Method<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse> __Method_SendUserSignUp = new grpc::Method<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse>(
+    static readonly grpc::Method<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse> __Method_UserSignUp = new grpc::Method<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "SendUserSignUp",
+        "UserSignUp",
         __Marshaller_P4TLB_MasterServer_UserSignUpRequest,
         __Marshaller_P4TLB_MasterServer_UserSignUpResponse);
 
@@ -41,12 +41,12 @@ namespace P4TLB.MasterServer {
     [grpc::BindServiceMethod(typeof(Authentication), "BindService")]
     public abstract partial class AuthenticationBase
     {
-      public virtual global::System.Threading.Tasks.Task<global::P4TLB.MasterServer.UserLoginResponse> SendUserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::P4TLB.MasterServer.UserLoginResponse> UserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
-      public virtual global::System.Threading.Tasks.Task<global::P4TLB.MasterServer.UserSignUpResponse> SendUserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::P4TLB.MasterServer.UserSignUpResponse> UserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -76,37 +76,37 @@ namespace P4TLB.MasterServer {
       {
       }
 
-      public virtual global::P4TLB.MasterServer.UserLoginResponse SendUserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::P4TLB.MasterServer.UserLoginResponse UserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return SendUserLogin(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return UserLogin(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
-      public virtual global::P4TLB.MasterServer.UserLoginResponse SendUserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::CallOptions options)
+      public virtual global::P4TLB.MasterServer.UserLoginResponse UserLogin(global::P4TLB.MasterServer.UserLoginRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_SendUserLogin, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_UserLogin, null, options, request);
       }
-      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserLoginResponse> SendUserLoginAsync(global::P4TLB.MasterServer.UserLoginRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserLoginResponse> UserLoginAsync(global::P4TLB.MasterServer.UserLoginRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return SendUserLoginAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return UserLoginAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
-      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserLoginResponse> SendUserLoginAsync(global::P4TLB.MasterServer.UserLoginRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserLoginResponse> UserLoginAsync(global::P4TLB.MasterServer.UserLoginRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_SendUserLogin, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_UserLogin, null, options, request);
       }
-      public virtual global::P4TLB.MasterServer.UserSignUpResponse SendUserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::P4TLB.MasterServer.UserSignUpResponse UserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return SendUserSignUp(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return UserSignUp(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
-      public virtual global::P4TLB.MasterServer.UserSignUpResponse SendUserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::CallOptions options)
+      public virtual global::P4TLB.MasterServer.UserSignUpResponse UserSignUp(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_SendUserSignUp, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_UserSignUp, null, options, request);
       }
-      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserSignUpResponse> SendUserSignUpAsync(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserSignUpResponse> UserSignUpAsync(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return SendUserSignUpAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return UserSignUpAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
-      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserSignUpResponse> SendUserSignUpAsync(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::P4TLB.MasterServer.UserSignUpResponse> UserSignUpAsync(global::P4TLB.MasterServer.UserSignUpRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_SendUserSignUp, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_UserSignUp, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override AuthenticationClient NewInstance(ClientBaseConfiguration configuration)
@@ -120,8 +120,8 @@ namespace P4TLB.MasterServer {
     public static grpc::ServerServiceDefinition BindService(AuthenticationBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_SendUserLogin, serviceImpl.SendUserLogin)
-          .AddMethod(__Method_SendUserSignUp, serviceImpl.SendUserSignUp).Build();
+          .AddMethod(__Method_UserLogin, serviceImpl.UserLogin)
+          .AddMethod(__Method_UserSignUp, serviceImpl.UserSignUp).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -130,8 +130,8 @@ namespace P4TLB.MasterServer {
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, AuthenticationBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_SendUserLogin, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse>(serviceImpl.SendUserLogin));
-      serviceBinder.AddMethod(__Method_SendUserSignUp, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse>(serviceImpl.SendUserSignUp));
+      serviceBinder.AddMethod(__Method_UserLogin, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::P4TLB.MasterServer.UserLoginRequest, global::P4TLB.MasterServer.UserLoginResponse>(serviceImpl.UserLogin));
+      serviceBinder.AddMethod(__Method_UserSignUp, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::P4TLB.MasterServer.UserSignUpRequest, global::P4TLB.MasterServer.UserSignUpResponse>(serviceImpl.UserSignUp));
     }
 
   }

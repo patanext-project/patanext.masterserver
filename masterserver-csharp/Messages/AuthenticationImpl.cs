@@ -10,18 +10,24 @@ namespace project.Messages
 	public class AuthenticationImpl : Authentication.AuthenticationBase
 	{
 		public World World;
-		
-		public override Task<UserLoginResponse> SendUserLogin(UserLoginRequest request, ServerCallContext context)
+
+		public override Task<UserLoginResponse> UserLogin(UserLoginRequest request, ServerCallContext context)
 		{
-			var result = new UserLoginResponse();
-			var databaseMgr = World.GetOrCreateManager<DatabaseManager>();
+			ulong id;
 			
-			return Task.FromResult(result);
+			var   userDbMgr = World.GetOrCreateManager<UserDatabaseManager>();
+			if ((id = userDbMgr.GetIdFromLogin(request.Login)) == 0)
+				return Task.FromResult(new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.Invalid});
+
+			var account = userDbMgr.FindById(id);
+
+			// todo, need to return the token and accounts details, get the client from the connection and set the current user...
+			return Task.FromResult(new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.Success});
 		}
 
-		public override Task<UserSignUpResponse> SendUserSignUp(UserSignUpRequest request, ServerCallContext context)
+		public override Task<UserSignUpResponse> UserSignUp(UserSignUpRequest request, ServerCallContext context)
 		{
-			return base.SendUserSignUp(request, context);
+			return base.UserSignUp(request, context);
 		}
 	}
 }

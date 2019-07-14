@@ -4,8 +4,8 @@ package P4TLB.MasterServer;
 
 service Authentication
 {
-    rpc SendUserLogin (UserLoginRequest) returns (UserLoginResponse) {}
-    rpc SendUserSignUp (UserSignUpRequest) returns (UserSignUpResponse) {} //< will not be enabled for now
+    rpc UserLogin (UserLoginRequest) returns (UserLoginResponse) {}
+    rpc UserSignUp (UserSignUpRequest) returns (UserSignUpResponse) {} //< will not be enabled for now
 }
 
 message UserLoginRequest
@@ -16,11 +16,17 @@ message UserLoginRequest
 
 message UserLoginResponse
 {
+    enum ErrorCode
+    {
+        Success = 0;
+        Invalid = 1;
+    }
+    
     /* Error codes:
      * 0 -> success
      * 1 -> invalid (we can't say if the password was incorrect or username was incorrect: security reason)
      */
-    int32 error = 1;
+    ErrorCode error = 1;
 }
 
 /* For the password part, we will use generated token from a homemade discord bot */
@@ -32,9 +38,11 @@ message UserSignUpRequest
 
 message UserSignUpResponse
 {
-    /* Error codes:
-     * 0 -> success
-     * 1 -> already existing login
-     */
-    int32 error = 1;
+    enum ErrorCode
+    {
+        Success = 0;
+        Invalid = 1;
+    }
+
+    ErrorCode error = 1;
 }
