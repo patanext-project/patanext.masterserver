@@ -1,8 +1,17 @@
 syntax = "proto3";
 
-message DataUserAccount
+package P4TLB.MasterServer;
+
+enum AccountType
 {
+    Player = 0;
+    Server = 1;
+}
+
+message DataUserAccount {
     uint64 id = 1; // key
     string login = 2;
     string hashed_password = 3;
+
+    AccountType Type = 4;
 }

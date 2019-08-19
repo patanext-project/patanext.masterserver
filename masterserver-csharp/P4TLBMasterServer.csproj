@@ -5,24 +5,35 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <RootNamespace>project</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>7.3</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP2_1;GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DefineConstants>TRACE;RELEASE;NETCOREAPP;NETCOREAPP2_1;GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="msg" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <PackageReference Include="Discord.Net" Version="2.1.1" />
+      <PackageReference Include="Discord.Net.Commands" Version="2.1.1" />
       <PackageReference Include="Google.Protobuf" Version="3.9.0" />
       <PackageReference Include="Grpc" Version="1.22.0" />
+      <PackageReference Include="Grpc.Auth" Version="1.22.0" />
       <PackageReference Include="Grpc.Tools" Version="1.22.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0-preview6.19304.6" />
       <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
       <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0-preview6.19303.8" />
     </ItemGroup>
 
-    <ItemGroup> 
-        <Protobuf Include="Messages/proto/*.proto" CompileOutputs="false" OutputDir="proto_generated/msg/" />
+    <ItemGroup>
         <Protobuf Include="RedisData/proto/*.proto" CompileOutputs="false" OutputDir="proto_generated/db/" GrpcServices="None" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Common\Packages\package.patapon.masterserver.shared\package.patapon.masterserver.shared.csproj" />
     </ItemGroup>
 
 </Project>

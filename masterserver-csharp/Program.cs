@@ -4,7 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
+using P4TLB.MasterServer;
 using P4TLBMasterServer;
+using P4TLBMasterServer.DiscordBot;
 using project.Messages;
 using StackExchange.Redis;
 
@@ -14,60 +17,56 @@ namespace project
 	{
 		static void Main(string[] args)
 		{
+			// host port of the masterserver.
 			var port = 4242;
 
+			// Create world with implementation and managers
+			// 'mapInstanceImpl' is dictionary with the implementation (grpc services)
 			var mapInstanceImpl = new Dictionary<Type, object>();
 			var world = new World(mapInstanceImpl);
 			
+			// Search available gRpc service through reflection
 			var implementations = SearchServiceImplementations(mapInstanceImpl);
 
+			// Create server...
 			var server = new Server
 			{
 				Ports = {new ServerPort("localhost", port, ServerCredentials.Insecure)}
 			};
+
+			// Add implementations...
 			foreach (var impl in implementations)
 			{
 				server.Services.Add(impl);
 			}
 
+			// Create some managers
 			world.GetOrCreateManager<ClientManager>();
+			world.GetOrCreateManager<DiscordBotManager>();
+
+			// Connect to Redis
 			var dbMgr = world.GetOrCreateManager<DatabaseManager>();
 			{
 				var conf = ConfigurationOptions.Parse("localhost");
-				//conf.Password = "topkek";
-				
 				dbMgr.SetConnection(ConnectionMultiplexer.Connect(conf));
 			}
-			world.GetImplInstance<AuthenticationImpl>().World = world;
+			
+			// World variables are not set automatically in services, so set it
+			// todo: it should be set automatically in future
+			world.GetImplInstance<AuthenticationServiceImpl>().World = world;
 
+			// Start the server
 			server.Start();
 
-			FindOrCreateAccount(world);
-
 			Console.WriteLine("The server is currently listening...\nPress a key to exit.");
-			Console.ReadKey();
-		}
-
-		// TEST
-		private static void FindOrCreateAccount(World world)
-		{
-			var             userDbMgr = world.GetOrCreateManager<UserDatabaseManager>();
-			DataUserAccount account;
-			
-			// no account with login 'guerro' found
-			if (userDbMgr.GetIdFromLogin("guerro") == 0)
+			while (true)
 			{
-				// So create one...
-				account = userDbMgr.CreateAccount("guerro", out var success);
-				
-				Console.WriteLine($"New Account Data: {account}");
-				
-				return;
-			}
+				if (Console.KeyAvailable)
+					break;
 
-			account = userDbMgr.FindById(userDbMgr.GetIdFromLogin("guerro"));
-			
-			Console.Write($"Existing Account Data: {account}");
+				// Update the world
+				world.Update();
+			}
 		}
 
 		private static IEnumerable<ServerServiceDefinition> SearchServiceImplementations(Dictionary<Type, object> mapInstanceImpl)
@@ -75,6 +74,12 @@ namespace project
 			//var result = new List<(Type binder, Type impl)>();
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
+			// May be complicated:
+			// We search for all classes that have a 'ImplementationAttribute' on them (to get the binder type)
+			// Then we get the 'BindService' method from the binder (it's a static method)
+			// Then we create an instance of the service implementation
+			// Then we call BindService with the new instance
+			// Then we add the service to the list.
 			return
 			(
 				from types
