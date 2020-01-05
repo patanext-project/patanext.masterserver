@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -7,6 +8,7 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using P4TLB.MasterServer;
 using P4TLBMasterServer;
+using P4TLBMasterServer.Discord;
 using P4TLBMasterServer.DiscordBot;
 using project.Messages;
 using StackExchange.Redis;
@@ -43,6 +45,8 @@ namespace project
 			// Create some managers
 			world.GetOrCreateManager<ClientManager>();
 			world.GetOrCreateManager<DiscordBotManager>();
+			world.GetOrCreateManager<DiscordLobby>();
+			world.GetOrCreateManager<DiscordLoginRoute>();
 
 			// Connect to Redis
 			var dbMgr = world.GetOrCreateManager<DatabaseManager>();
@@ -57,6 +61,15 @@ namespace project
 
 			// Start the server
 			server.Start();
+
+			var userMgr = world.GetOrCreateManager<UserDatabaseManager>();
+			for (var i = 0; i != 2; i++)
+			{
+				var id = userMgr.GetIdFromLogin("server_" + i);
+				if (id > 0)
+					continue;
+				var account = userMgr.CreateAccount("server_" + i, out var success);
+			}
 
 			Console.WriteLine("The server is currently listening...\nPress a key to exit.");
 			while (true)

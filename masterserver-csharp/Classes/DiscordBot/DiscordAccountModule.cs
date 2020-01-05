@@ -16,6 +16,7 @@ namespace P4TLBMasterServer.DiscordBot
 		[Summary("Returns all registered users on the master server.")]
 		public async Task GetAllUsers(int min = 1, int length = 0)
 		{
+			var clientMgr = World.GetOrCreateManager<ClientManager>();
 			var userDbMgr = World.GetOrCreateManager<UserDatabaseManager>();
 			var users = userDbMgr.GetAllUsers(min, length).OrderBy((u) => u.Id);
 
@@ -23,11 +24,12 @@ namespace P4TLBMasterServer.DiscordBot
 			            .WithAuthor(Context.User)
 			            .WithTitle($"Showing {users.Count()} users (out of {userDbMgr.GetUserCount()})")
 			            .WithColor(Color.Red)
-			            .WithFooter("🔹 = Discord User");
+			            .WithFooter("🔹 = Discord User, 🔅 = Connected");
 
 			foreach (var user in users)
 			{
 				var newLogin = user.Login;
+
 				if (newLogin.StartsWith("DISCORD_"))
 				{
 					var discordId = newLogin.Replace("DISCORD_", string.Empty);
@@ -37,13 +39,16 @@ namespace P4TLBMasterServer.DiscordBot
 					}
 				}
 
+				var cstr = "◾";
+				if (clientMgr.GetClientIdByUserId(user.Id) > 0) // connected
+					cstr = "🔅";
 				
 				var idStr = user.Id.ToString();
 				if (user.Id < 10)
 					idStr = "0" + idStr;
 				if (user.Id < 100)
 					idStr = "0" + idStr;
-				embedBuilder.Description += $"`id:{idStr}`\t {newLogin}\n";
+				embedBuilder.Description += $"`id:{idStr}`\t {cstr}{newLogin}\n";
 			}
 
 			await Context.Channel.SendMessageAsync($"✅ `&all_users` result\n🤖 Requested from {Context.User.Mention}", embed: embedBuilder.Build());

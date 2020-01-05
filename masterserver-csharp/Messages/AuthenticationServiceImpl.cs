@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using P4TLB.MasterServer;
 using P4TLBMasterServer;
+using P4TLBMasterServer.Discord;
 
 namespace project.Messages
 {
@@ -13,7 +14,7 @@ namespace project.Messages
 		public World World;
 
 		/// An user can be a player or a server
-		public override Task<UserLoginResponse> UserLogin(UserLoginRequest request, ServerCallContext context)
+		public override async Task<UserLoginResponse> UserLogin(UserLoginRequest request, ServerCallContext context)
 		{
 			ulong id;
 
@@ -23,14 +24,29 @@ namespace project.Messages
 			if ((id = userDbMgr.GetIdFromLogin(request.Login)) == 0)
 			{
 				Console.WriteLine("No user found....");
-				return Task.FromResult(new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.Invalid});
+				return new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.Invalid};
 			}
 
+			ILoginRouteBase route = null;
+			if (request.Login.StartsWith("DISCORD_"))
+			{
+				route = World.GetOrCreateManager<DiscordLoginRoute>();
+			}
+			
+			if (route == null)
+				throw new Exception("Route is null");
+
+			Console.WriteLine(request.RouteData);
+			
+			var routeResult = await route.Start(request.Login, request.RouteData);
+			if (!routeResult.Accepted)
+				return new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.Invalid};
+			
 			var clientMgr = World.GetOrCreateManager<ClientManager>();
 			// Find if the peer is already connected or not
 			if (clientMgr.GetClientIdByUserId(id) > 0) // already connected...
 			{
-				return Task.FromResult(new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.AlreadyConnected});
+				return new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.AlreadyConnected};
 			}
 			
 			var account   = userDbMgr.FindById(id);
@@ -39,15 +55,16 @@ namespace project.Messages
 			var client = clientMgr.ConnectClient(account.Login);
 			// link user to client
 			clientMgr.ReplaceData(client, account);
+			clientMgr.LinkUserClient(account, client);
 
 			// todo, need to return the token and accounts details, get the client from the connection and set the current user...
-			return Task.FromResult(new UserLoginResponse
+			return new UserLoginResponse
 			{
 				Error    = UserLoginResponse.Types.ErrorCode.Success,
 				ClientId = client.Id,
 				UserId   = account.Id,
 				Token    = client.Token
-			});
+			};
 		}
 
 		// NOT DONE YET.
