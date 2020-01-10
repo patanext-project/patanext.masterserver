@@ -11,11 +11,21 @@ namespace P4TLBMasterServer
 		Remove
 	}
 
-	public struct OnEntityUpdate<TEntityDescription, TComponent>
+	public interface IEntityUpdateKey<TEntityDescription>
+	{
+		TEntityDescription Key { get; set; }
+	}
+
+	public interface IEntityUpdateValue<TComponent>
+	{
+		TComponent Value { get; set; }
+	}
+
+	public struct OnEntityUpdate<TEntityDescription, TComponent> : IEntityUpdateKey<TEntityDescription>, IEntityUpdateValue<TComponent>
 	{
 		public EntityOperation    Operation;
-		public TEntityDescription Entity;
-		public TComponent         Component;
+		public TEntityDescription Key   { get; set; }
+		public TComponent         Value { get; set; }
 	}
 
 	public class EntityManager : ManagerBase
@@ -29,6 +39,12 @@ namespace P4TLBMasterServer
 			base.OnCreate();
 
 			databaseManager = World.GetOrCreateManager<DatabaseManager>();
+		}
+
+		public async Task<bool> DbExists<TEntityDescription>(TEntityDescription entity)
+			where TEntityDescription : IEntityDescription
+		{
+			return await databaseManager.db.KeyExistsAsync(entity.GetEntityIdPath());
 		}
 
 		public async Task<bool> HasComponent<TEntityDescription, TComponent>(TEntityDescription entity)
@@ -61,8 +77,8 @@ namespace P4TLBMasterServer
 			var success = await component.OnUpdateOperationRequested(entity, World, databaseManager);
 			World.Notify(this, NotificationOnEntityUpdate, new OnEntityUpdate<TEntityDescription, TComponent>
 			{
-				Entity    = entity,
-				Component = component,
+				Key       = entity,
+				Value     = component,
 				Operation = EntityOperation.Replace
 			});
 
@@ -82,8 +98,8 @@ namespace P4TLBMasterServer
 			if (success)
 				World.Notify(this, NotificationOnEntityUpdate, new OnEntityUpdate<TEntityDescription, TComponent>
 				{
-					Entity    = entity,
-					Component = component,
+					Key       = entity,
+					Value     = component,
 					Operation = EntityOperation.Remove
 				});
 			return success;
@@ -103,8 +119,8 @@ namespace P4TLBMasterServer
 			if (success)
 				World.Notify(this, NotificationOnEntityUpdate, new OnEntityUpdate<TEntityDescription, TComponent>
 				{
-					Entity    = entity,
-					Component = component,
+					Key       = entity,
+					Value     = component,
 					Operation = EntityOperation.Replace
 				});
 			return success;

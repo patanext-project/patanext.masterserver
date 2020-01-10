@@ -5,6 +5,7 @@ namespace P4TLBMasterServer
 {
 	public interface IEntityDescription
 	{
+		string GetEntityIdPath();
 		string GetEntityComponentPath(string componentName);
 		string GetEntityComponentListPath();
 	}

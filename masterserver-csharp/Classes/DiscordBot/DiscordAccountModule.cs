@@ -35,7 +35,7 @@ namespace P4TLBMasterServer.DiscordBot
 					var discordId = newLogin.Replace("DISCORD_", string.Empty);
 					if (ulong.TryParse(discordId, out var discordIdInteger))
 					{
-						newLogin = "🔹 " + Context.Client.GetUser(discordIdInteger).Mention;
+						newLogin = "🔹 " + (Context?.Client?.GetUser(discordIdInteger)?.Mention ?? "NOT FOUND");
 					}
 				}
 

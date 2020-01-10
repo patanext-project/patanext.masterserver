@@ -11,7 +11,7 @@ namespace project.P4Classes
 			if (data is OnPlayerFormationRelay relay)
 			{
 				var formationDbMgr = World.GetOrCreateManager<FormationDatabaseManager>();
-				var formation      = formationDbMgr.FindFormation(relay.FormationId);
+				var formation      = await formationDbMgr.FindFormation(relay.FormationId);
 				if (formation == null)
 					Logger.Error("Formation doesn't exist.", true);
 

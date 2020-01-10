@@ -13,7 +13,7 @@ namespace project.P4Classes
 
 	public class P4CreateFormationOnceManager : ManagerBase
 	{
-		public override void OnNotification<T>(object caller, string eventName, T data)
+		public override async void OnNotification<T>(object caller, string eventName, T data)
 		{
 			if (eventName == "OnUserConnection" && data is OnUserConnection onUserConnection)
 			{
@@ -21,8 +21,7 @@ namespace project.P4Classes
 
 				OnPlayerFormationRelay relay;
 				ulong                    formationId;
-				Console.WriteLine("yes: " + formationDbMgr.FindFormationIdByUserId(onUserConnection.User.Id));
-				if ((formationId = formationDbMgr.FindFormationIdByUserId(onUserConnection.User.Id)) > 0)
+				if ((formationId = await formationDbMgr.FindFormationIdByUserId(onUserConnection.User.Id)) > 0)
 				{
 					relay = new OnPlayerFormationRelay {UserId = onUserConnection.User.Id, FormationId = formationId};
 					World.Notify(this, "OnPlayerFormationRelay", relay);

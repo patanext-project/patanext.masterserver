@@ -20,7 +20,7 @@ namespace project.P4Classes
 			var formationId    = 0u;
 			if (request.UserId > 0)
 			{
-				formationId = formationDbMgr.FindFormationIdByUserId(request.UserId);
+				formationId = await formationDbMgr.FindFormationIdByUserId(request.UserId);
 			}
 
 			// if request.UserId was 0 or if we didn't found it with the id...
@@ -33,7 +33,7 @@ namespace project.P4Classes
 					return new GetFormationOfPlayerResult {Error = GetFormationOfPlayerResult.Types.ErrorCode.InvalidRequest};
 				}
 
-				formationId = formationDbMgr.FindFormationIdByUserId(request.UserId);
+				formationId = await formationDbMgr.FindFormationIdByUserId(request.UserId);
 			}
 
 			// still nothing?
@@ -42,7 +42,7 @@ namespace project.P4Classes
 				return new GetFormationOfPlayerResult {Error = GetFormationOfPlayerResult.Types.ErrorCode.NoFormation};
 			}
 
-			var formation = formationDbMgr.FindFormation(formationId);
+			var formation = await formationDbMgr.FindFormation(formationId);
 			return new GetFormationOfPlayerResult {Result = formation, Error = GetFormationOfPlayerResult.Types.ErrorCode.Success};
 		}
 	}

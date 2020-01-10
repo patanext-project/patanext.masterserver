@@ -6,26 +6,26 @@ namespace P4TLBMasterServer
 {
 	public class ClientEventList : IEnumerable<CheckEventResponse.Types.EventData>
 	{
-		private List<CheckEventResponse.Types.EventData> list = new List<CheckEventResponse.Types.EventData>();
+		private HashSet<CheckEventResponse.Types.EventData> hashSet = new HashSet<CheckEventResponse.Types.EventData>();
 
 		public void Add(string ev)
 		{
-			list.Add(new CheckEventResponse.Types.EventData {Name = ev});
+			hashSet.Add(new CheckEventResponse.Types.EventData {Name = ev});
 		}
 
 		public void Clear()
 		{
-			list.Clear();
+			hashSet.Clear();
 		}
 		
 		public IEnumerator<CheckEventResponse.Types.EventData> GetEnumerator()
 		{
-			return list.GetEnumerator();
+			return hashSet.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return list.GetEnumerator();
+			return hashSet.GetEnumerator();
 		}
 	}
 }

@@ -26,6 +26,22 @@ namespace P4TLBMasterServer
 			return (T) m_MappedImplementationInstance[typeof(T)];
 		}
 
+		public object GetOrCreateManager(Type type)
+		{
+			if (!m_MappedManager.TryGetValue(type, out var obj))
+			{
+				var gen = (ManagerBase) Activator.CreateInstance(type);
+				m_MappedManager[type] = gen;
+
+				gen.World = this;
+				gen.OnCreate();
+				
+				return gen;
+			}
+
+			return obj;	
+		}
+		
 		/// <summary>
 		/// Get or create a manager
 		/// </summary>
@@ -34,18 +50,7 @@ namespace P4TLBMasterServer
 		public T GetOrCreateManager<T>()
 			where T : ManagerBase, new()
 		{
-			if (!m_MappedManager.TryGetValue(typeof(T), out var obj))
-			{
-				var gen = new T();
-				m_MappedManager[typeof(T)] = gen;
-
-				gen.World = this;
-				gen.OnCreate();
-				
-				return gen;
-			}
-
-			return (T) obj;
+			return (T) GetOrCreateManager(typeof(T));
 		}
 
 		/// <summary>

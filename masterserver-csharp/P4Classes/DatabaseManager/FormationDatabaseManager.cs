@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using P4TLB.MasterServer;
 using P4TLBMasterServer;
 
@@ -10,12 +11,12 @@ namespace project.P4Classes
 	public class FormationDatabaseManager : ManagerBase
 	{
 		public static readonly string NotificationOnFormationUpdate = "Db.OnFormationUpdate";
-		
+
 		public struct OnFormationUpdate
 		{
 			public P4ArmyFormationRoot Formation;
 		}
-		
+
 		private DatabaseManager m_DatabaseManager;
 
 		public override void OnCreate()
@@ -53,21 +54,21 @@ namespace project.P4Classes
 			World.Notify(this, NotificationOnFormationUpdate, new OnFormationUpdate {Formation = value});
 		}
 
-		public P4ArmyFormationRoot FindFormation(ulong formationId)
+		public async Task<P4ArmyFormationRoot> FindFormation(ulong formationId)
 		{
 			if (formationId == 0)
 				return null;
-			return m_DatabaseManager.Get<P4ArmyFormationRoot>(GetFormationPath(formationId));
+			return await m_DatabaseManager.GetAsync<P4ArmyFormationRoot>(GetFormationPath(formationId));
 		}
 
-		public uint FindFormationIdByUserId(ulong userId)
+		public async Task<uint> FindFormationIdByUserId(ulong userId)
 		{
-			var rv = m_DatabaseManager.db.StringGet(GetUserToFormationPath(userId));
+			var rv = await m_DatabaseManager.db.StringGetAsync(GetUserToFormationPath(userId));
 			if (!rv.HasValue)
 				return 0;
 			return (uint) rv;
 		}
-		
+
 		/// <summary>
 		/// Get formation count
 		/// </summary>
@@ -76,7 +77,7 @@ namespace project.P4Classes
 		{
 			return (ulong) m_DatabaseManager.db.StringGet(GetPathIncrementalId());
 		}
-		
+
 		private string GetPathIncrementalId()
 		{
 			return string.Format(GetRootPath(), "incremental_id");

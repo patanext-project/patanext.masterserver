@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+using Grpc.Core.Logging;
 using P4TLB.MasterServer;
 using P4TLBMasterServer;
 using P4TLBMasterServer.Discord;
@@ -18,6 +19,7 @@ namespace project
 {
 	public struct OnProgramInitialized {}
 	
+	
 	class Program
 	{
 		static void Main(string[] args)
@@ -29,6 +31,8 @@ namespace project
 			// 'mapInstanceImpl' is dictionary with the implementation (grpc services)
 			var mapInstanceImpl = new Dictionary<Type, object>();
 			var world = new World(mapInstanceImpl);
+			
+			GrpcEnvironment.SetLogger(new ConsoleLogger());
 			
 			// Search available gRpc service through reflection
 			var implementations = SearchServiceImplementations(mapInstanceImpl);
@@ -53,7 +57,7 @@ namespace project
 			world.GetOrCreateManager<P4CreateFormationOnceManager>();
 			world.GetOrCreateManager<P4CreateUnitInFormationOnce>();
 			world.GetOrCreateManager<UnitKitComponentManager>();
-			world.GetOrCreateManager<RelayFormationEventToClient>();
+			world.GetOrCreateManager<RelayStandardEventToClient>();
 
 			// Connect to Redis
 			var dbMgr = world.GetOrCreateManager<DatabaseManager>();
@@ -69,6 +73,8 @@ namespace project
 				{
 					if (property.PropertyType == typeof(World))
 						property.SetValue(implementation, world);
+					if (property.PropertyType.IsSubclassOf(typeof(ManagerBase)))
+						property.SetValue(implementation, world.GetOrCreateManager(property.PropertyType));
 				}
 			}
 

@@ -6,6 +6,14 @@ namespace project.P4Classes.Entities
 	{
 		public ulong Id;
 
+		public string GetEntityIdPath()
+		{
+			if (Id <= 0)
+				Logger.Error("Unit with ID 0 found...", true);
+			
+			return UnitDatabaseManager.GetUnitPath(Id);
+		}
+
 		public string GetEntityComponentPath(string componentName)
 		{
 			if (Id <= 0)

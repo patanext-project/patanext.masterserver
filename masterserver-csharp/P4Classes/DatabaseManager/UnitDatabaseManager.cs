@@ -57,6 +57,11 @@ namespace project.P4Classes
 			return result;
 		}
 
+		public async Task<P4UnitData> FindUnit(ulong unitId)
+		{
+			return await databaseManager.GetAsync<P4UnitData>(GetUnitPath(unitId));
+		}
+
 		private static string GetIncrementalPath()
 		{
 			return string.Format(GetRootPath(), "incremental_count");
