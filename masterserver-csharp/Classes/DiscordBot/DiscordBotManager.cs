@@ -77,6 +77,8 @@ namespace P4TLBMasterServer.DiscordBot
 
 
 		private int m_PreviousOnlineCount;
+		private int m_FlipStatusAt;
+		private bool m_ShowOnline;
 
 		public override void OnUpdate()
 		{
@@ -85,6 +87,23 @@ namespace P4TLBMasterServer.DiscordBot
 			{
 				m_PreviousOnlineCount = clientMgr.ConnectedCount;
 				UpdateOnlineCounter(m_PreviousOnlineCount, 0);
+				m_ShowOnline = false;
+				m_FlipStatusAt = Environment.TickCount + 5_000;
+			}
+
+			if (m_FlipStatusAt < Environment.TickCount)
+			{
+				m_FlipStatusAt = Environment.TickCount + 10_000;
+				if (m_ShowOnline)
+				{
+					UpdateOnlineCounter(m_PreviousOnlineCount, 0);
+				}
+				else
+				{
+					m_Client.SetGameAsync("P4 | &help");
+				}
+
+				m_ShowOnline = !m_ShowOnline;
 			}
 		}
 	}

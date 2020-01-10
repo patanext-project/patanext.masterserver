@@ -11,10 +11,13 @@ using P4TLBMasterServer;
 using P4TLBMasterServer.Discord;
 using P4TLBMasterServer.DiscordBot;
 using project.Messages;
+using project.P4Classes;
 using StackExchange.Redis;
 
 namespace project
 {
+	public struct OnProgramInitialized {}
+	
 	class Program
 	{
 		static void Main(string[] args)
@@ -47,6 +50,10 @@ namespace project
 			world.GetOrCreateManager<DiscordBotManager>();
 			world.GetOrCreateManager<DiscordLobby>();
 			world.GetOrCreateManager<DiscordLoginRoute>();
+			world.GetOrCreateManager<P4CreateFormationOnceManager>();
+			world.GetOrCreateManager<P4CreateUnitInFormationOnce>();
+			world.GetOrCreateManager<UnitKitComponentManager>();
+			world.GetOrCreateManager<RelayFormationEventToClient>();
 
 			// Connect to Redis
 			var dbMgr = world.GetOrCreateManager<DatabaseManager>();
@@ -55,9 +62,15 @@ namespace project
 				dbMgr.SetConnection(ConnectionMultiplexer.Connect(conf));
 			}
 			
-			// World variables are not set automatically in services, so set it
-			// todo: it should be set automatically in future
-			world.GetImplInstance<AuthenticationServiceImpl>().World = world;
+			// inject world to implementations...
+			foreach (var (type, implementation) in mapInstanceImpl)
+			{
+				foreach (var property in type.GetRuntimeProperties())
+				{
+					if (property.PropertyType == typeof(World))
+						property.SetValue(implementation, world);
+				}
+			}
 
 			// Start the server
 			server.Start();
@@ -70,6 +83,8 @@ namespace project
 					continue;
 				var account = userMgr.CreateAccount("server_" + i, out var success);
 			}
+			
+			world.Notify(null, string.Empty, new OnProgramInitialized {});
 
 			Console.WriteLine("The server is currently listening...\nPress a key to exit.");
 			while (true)
@@ -82,7 +97,7 @@ namespace project
 			}
 		}
 
-		private static IEnumerable<ServerServiceDefinition> SearchServiceImplementations(Dictionary<Type, object> mapInstanceImpl)
+		private static List<ServerServiceDefinition> SearchServiceImplementations(Dictionary<Type, object> mapInstanceImpl)
 		{
 			//var result = new List<(Type binder, Type impl)>();
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();

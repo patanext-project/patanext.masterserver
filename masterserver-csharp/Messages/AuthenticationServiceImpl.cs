@@ -1,22 +1,36 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using P4TLB.MasterServer;
 using P4TLBMasterServer;
 using P4TLBMasterServer.Discord;
+using P4TLBMasterServer.Events;
 
 namespace project.Messages
 {
 	[Implementation(typeof(AuthenticationService))]
 	public class AuthenticationServiceImpl : AuthenticationService.AuthenticationServiceBase
 	{
-		public World World;
+		public World World { get; set; }
 
+		private Dictionary<string, int> m_RequestDelays = new Dictionary<string, int>();
+		
 		/// An user can be a player or a server
 		public override async Task<UserLoginResponse> UserLogin(UserLoginRequest request, ServerCallContext context)
 		{
 			ulong id;
+
+			if (m_RequestDelays.TryGetValue(request.Login, out var blockTimeout)
+			    && blockTimeout > Environment.TickCount)
+			{
+				Console.WriteLine("calm calm " + request.Login);
+				return new UserLoginResponse {Error = UserLoginResponse.Types.ErrorCode.ConnectionAlreadyPending};
+			}
+			
+			// 5 seconds delay
+			m_RequestDelays[request.Login] = Environment.TickCount + 5_000;
 
 			Console.WriteLine($"User login request [login: {request.Login}]");
 
@@ -56,6 +70,12 @@ namespace project.Messages
 			// link user to client
 			clientMgr.ReplaceData(client, account);
 			clientMgr.LinkUserClient(account, client);
+			
+			Console.WriteLine($"User connected [login: {request.Login}]");
+			
+			clientMgr.GetOrCreateData<ClientEventList>(client).Add("test login");
+			
+			World.Notify(this, "OnUserConnection", new OnUserConnection {User = account, Client = client});
 
 			// todo, need to return the token and accounts details, get the client from the connection and set the current user...
 			return new UserLoginResponse

@@ -114,6 +114,18 @@ namespace P4TLBMasterServer
 			return (T) obj;
 		}
 
+		public bool TryGetClientFromUserId(ulong userId, out Client client)
+		{
+			int clientId;
+			if ((clientId = GetClientIdByUserId(userId)) <= 0)
+			{
+				client = default;
+				return false;
+			}
+
+			return GetClient(clientId, out client);
+		}
+
 		/// <summary>
 		/// Link the user with the client
 		/// </summary>
@@ -126,7 +138,7 @@ namespace P4TLBMasterServer
 
 		internal void UnlinkUserClient(DataUserAccount userAccount, Client client)
 		{
-			
+			m_UserToClient.Remove(userAccount.Id);
 		}
 
 		internal int GetClientIdByUserId(ulong id)

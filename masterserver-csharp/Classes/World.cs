@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace P4TLBMasterServer
 {
@@ -52,9 +53,28 @@ namespace P4TLBMasterServer
 		/// </summary>
 		public void Update()
 		{
-			foreach (var manager in m_MappedManager)
+			var list = m_MappedManager.ToList();
+			foreach (var manager in list)
 			{
 				manager.Value.OnUpdate();
+			}
+		}
+
+		public void Notify<T>(object caller, string eventName, T data)
+		{
+			Console.WriteLine($"notification: {eventName}:{data.GetType()}");
+			try
+			{
+				var list = m_MappedManager.ToList();
+				foreach (var (key, manager) in list)
+				{
+					manager.OnNotification(caller, eventName, data);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				throw;
 			}
 		}
 	}
@@ -65,5 +85,6 @@ namespace P4TLBMasterServer
 		
 		public virtual void OnCreate() {}
 		public virtual void OnUpdate() {}
+		public virtual void OnNotification<T>(object caller, string eventName, T data) {}
 	}
 }

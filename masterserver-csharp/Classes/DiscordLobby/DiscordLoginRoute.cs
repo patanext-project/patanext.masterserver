@@ -14,14 +14,13 @@ namespace P4TLBMasterServer.Discord
 			var searchResult = await lobbyMgr.SearchLobby(userId);
 			if (!searchResult.IsSuccessStatusCode)
 				throw new Exception("Lobbies couldn't be searched");
-
+			
 			var search = await get_dynamic(searchResult);
 			foreach (var server in search)
 			{
 				if (server.owner_id == userId)
 				{
 					return new LoginRouteResult {Accepted = true};
-					break;
 				}
 			}
 			
