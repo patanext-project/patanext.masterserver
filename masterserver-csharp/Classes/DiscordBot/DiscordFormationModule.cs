@@ -26,7 +26,7 @@ namespace P4TLBMasterServer.DiscordBot
 			var login = $"DISCORD_{user.Id}";
 
 			ulong userId;
-			if ((userId = userDbMgr.GetIdFromLogin(login)) <= 0)
+			if ((userId = await userDbMgr.GetIdFromLogin(login)) <= 0)
 			{
 				await Context.Channel.SendMessageAsync("Invalid User (or user did not registered).");
 				return;

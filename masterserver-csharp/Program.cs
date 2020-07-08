@@ -40,7 +40,7 @@ namespace project
 			// Create server...
 			var server = new Server
 			{
-				Ports = {new ServerPort("localhost", port, ServerCredentials.Insecure)}
+				Ports = {new ServerPort(IPAddress.Any.ToString(), port, ServerCredentials.Insecure)}
 			};
 
 			// Add implementations...
@@ -58,6 +58,13 @@ namespace project
 			world.GetOrCreateManager<P4CreateUnitInFormationOnce>();
 			world.GetOrCreateManager<UnitKitComponentManager>();
 			world.GetOrCreateManager<RelayStandardEventToClient>();
+			
+			// Create forgotten managers...
+			foreach (var type in SearchManagers())
+			{
+				System.Console.WriteLine("creating " + type.FullName);
+				world.GetOrCreateManager(type);
+			}
 
 			// Connect to Redis
 			var dbMgr = world.GetOrCreateManager<DatabaseManager>();
@@ -84,8 +91,10 @@ namespace project
 			var userMgr = world.GetOrCreateManager<UserDatabaseManager>();
 			for (var i = 0; i != 2; i++)
 			{
-				var id = userMgr.GetIdFromLogin("server_" + i);
-				if (id > 0)
+				var getIdTask = userMgr.GetIdFromLogin("server_" + i);
+				getIdTask.Wait();
+				
+				if (getIdTask.Result > 0)
 					continue;
 				var account = userMgr.CreateAccount("server_" + i, out var success);
 			}
@@ -95,8 +104,9 @@ namespace project
 			Console.WriteLine("The server is currently listening...\nPress a key to exit.");
 			while (true)
 			{
-				if (Console.KeyAvailable)
-					break;
+				//System.Console.WriteLine(Console.In.Peek());
+				/*if (Console.In.Peek() == 0)
+					break;*/
 
 				// Update the world
 				world.Update();
@@ -105,7 +115,6 @@ namespace project
 
 		private static List<ServerServiceDefinition> SearchServiceImplementations(Dictionary<Type, object> mapInstanceImpl)
 		{
-			//var result = new List<(Type binder, Type impl)>();
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
 			// May be complicated:
@@ -126,6 +135,19 @@ namespace project
 				let bindMethod = binder.GetMethods().First(m => m.Name == "BindService" && m.GetParameters().Length == 1)
 				let instance = mapInstanceImpl[type] = Activator.CreateInstance(type)
 				select (ServerServiceDefinition) bindMethod.Invoke(null, new[] {instance})
+			).ToList();
+		}
+
+		private static List<Type> SearchManagers()
+		{
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			return
+			(
+				from types
+					in assemblies.Select(a => a.GetTypes())
+				from type
+					in types.Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ManagerBase)))
+				select type
 			).ToList();
 		}
 	}

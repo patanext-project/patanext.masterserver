@@ -1,4 +1,5 @@
 using System;
+using P4TLB.MasterServer;
 using P4TLBMasterServer;
 using P4TLBMasterServer.Events;
 
@@ -17,6 +18,9 @@ namespace project.P4Classes
 		{
 			if (eventName == "OnUserConnection" && data is OnUserConnection onUserConnection)
 			{
+				if (onUserConnection.User.Type == AccountType.Server)
+					return;
+				
 				var formationDbMgr = World.GetOrCreateManager<FormationDatabaseManager>();
 
 				OnPlayerFormationRelay relay;

@@ -53,15 +53,24 @@ namespace P4TLBMasterServer
 			return (T) GetOrCreateManager(typeof(T));
 		}
 
+		private List<ManagerBase> m_SystemList = new List<ManagerBase>();
 		/// <summary>
 		/// Update the world
 		/// </summary>
 		public void Update()
 		{
-			var list = m_MappedManager.ToList();
-			foreach (var manager in list)
+			if (m_MappedManager.Count != m_SystemList.Count)
 			{
-				manager.Value.OnUpdate();
+				m_SystemList.Clear();
+				foreach (var manager in m_MappedManager.Values)
+				{
+					m_SystemList.Add(manager);
+				}
+			}
+
+			foreach (var manager in m_SystemList)
+			{
+				manager.OnUpdate();
 			}
 		}
 
@@ -70,15 +79,14 @@ namespace P4TLBMasterServer
 			Console.WriteLine($"notification: {eventName}:{data.GetType()}");
 			try
 			{
-				var list = m_MappedManager.ToList();
-				foreach (var (key, manager) in list)
+				foreach (var manager in m_SystemList)
 				{
 					manager.OnNotification(caller, eventName, data);
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
+				Console.WriteLine("Notify Exception:\n" + ex.ToString());
 				throw;
 			}
 		}

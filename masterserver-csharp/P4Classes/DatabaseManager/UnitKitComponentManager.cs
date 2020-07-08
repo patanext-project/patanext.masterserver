@@ -13,7 +13,7 @@ namespace project.P4Classes
 			{
 				await EntityManager.ReplaceComponent<UnitEntityDescription, P4KitComponent, P4KitData>(new UnitEntityDescription {Id = data.UnitData.Id}, new P4KitComponent
 				{
-					Serialized = new P4KitData {KitId = 1}
+					Serialized = new P4KitData {KitId = 1, UnitId = data.UnitData.Id}
 				});
 			}
 		}

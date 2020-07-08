@@ -28,7 +28,7 @@ namespace project.P4Classes
 			{
 				var   userDbMgr = World.GetOrCreateManager<UserDatabaseManager>();
 				ulong id;
-				if ((id = userDbMgr.GetIdFromLogin(request.UserLogin)) <= 0)
+				if ((id = await userDbMgr.GetIdFromLogin(request.UserLogin)) <= 0)
 				{
 					return new GetFormationOfPlayerResult {Error = GetFormationOfPlayerResult.Types.ErrorCode.InvalidRequest};
 				}

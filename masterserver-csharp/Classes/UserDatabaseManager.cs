@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using P4TLB.MasterServer;
 
 namespace P4TLBMasterServer
@@ -19,9 +20,9 @@ namespace P4TLBMasterServer
 		/// </summary>
 		/// <param name="id">The ID</param>
 		/// <returns>The user (or null user if no user were found)</returns>
-		public DataUserAccount FindById(ulong id)
+		public async Task<DataUserAccount> FindById(ulong id)
 		{
-			return m_DatabaseManager.Get<DataUserAccount>(GetPathId(id));
+			return await m_DatabaseManager.GetAsync<DataUserAccount>(GetPathId(id));
 		}
 
 		/// <summary>
@@ -29,9 +30,9 @@ namespace P4TLBMasterServer
 		/// </summary>
 		/// <param name="login">The login</param>
 		/// <returns>Return an ID, if it's 0 or less, then it couldn't find the user login</returns>
-		public ulong GetIdFromLogin(string login)
+		public async Task<ulong> GetIdFromLogin(string login)
 		{
-			var id = m_DatabaseManager.db.StringGet(GetPathLoginToId(login));
+			var id = await m_DatabaseManager.db.StringGetAsync(GetPathLoginToId(login));
 			if (!id.HasValue)
 				return 0;
 			return (ulong) id;
@@ -46,7 +47,10 @@ namespace P4TLBMasterServer
 		/// <exception cref="Exception"></exception>
 		public DataUserAccount CreateAccount(string login, out bool success)
 		{
-			if (GetIdFromLogin(login) > 0)
+			var getIdTask = GetIdFromLogin(login);
+			getIdTask.Wait();
+			
+			if (getIdTask.Result > 0)
 			{
 				throw new Exception($"An account with login '{login}' already exist.");
 			}

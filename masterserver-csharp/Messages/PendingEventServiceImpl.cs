@@ -17,10 +17,10 @@ namespace project.Messages
 		{
 			var clientMgr = World.GetOrCreateManager<ClientManager>();
 			if (!clientMgr.GetClient(request.ClientToken, out var client))
-				throw new Exception("Invalid token.");
+				return new CheckEventResponse();
 
 			var eventList = clientMgr.GetOrCreateData<ClientEventList>(client);
-			var ev = new CheckEventResponse {Events = {eventList}};
+			var ev = new CheckEventResponse {Success = true, Events = {eventList}};
 			eventList.Clear();
 			
 			return ev;
