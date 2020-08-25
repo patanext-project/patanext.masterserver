@@ -35,7 +35,7 @@ namespace P4TLBMasterServer.DiscordBot
 			ulong formationId;
 			if ((formationId = await formationDbMgr.FindFormationIdByUserId(userId)) <= 0)
 			{
-				await Context.Channel.SendMessageAsync("No army formation found for requested user. It may be possible that he didn't launched the game.");
+				await Context.Channel.SendMessageAsync("No army formation found for requested user. It may be possible that they didn't launched the game.");
 				return;
 			}
 

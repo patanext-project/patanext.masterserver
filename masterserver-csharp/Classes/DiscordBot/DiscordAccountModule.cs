@@ -51,7 +51,7 @@ namespace P4TLBMasterServer.DiscordBot
 				embedBuilder.Description += $"`id:{idStr}`\t {cstr}{newLogin}\n";
 			}
 
-			await Context.Channel.SendMessageAsync($"✅ `&all_users` result\n🤖 Requested from {Context.User.Mention}", embed: embedBuilder.Build());
+			await Context.Channel.SendMessageAsync($"> `&all_users` result\n> Requested from {Context.User.Mention}", embed: embedBuilder.Build());
 		}
 	}
 }
