@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameHost", "..\..\..\..\GameHost\GameHost\GameHost.csproj", "{E62359B8-197B-4DD6-8D34-C26DA0BA2482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STMasterServer", "STMasterServer.csproj", "{AD9A89C8-FDC1-4805-9211-068873FA22A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E62359B8-197B-4DD6-8D34-C26DA0BA2482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E62359B8-197B-4DD6-8D34-C26DA0BA2482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E62359B8-197B-4DD6-8D34-C26DA0BA2482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E62359B8-197B-4DD6-8D34-C26DA0BA2482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD9A89C8-FDC1-4805-9211-068873FA22A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9A89C8-FDC1-4805-9211-068873FA22A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9A89C8-FDC1-4805-9211-068873FA22A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9A89C8-FDC1-4805-9211-068873FA22A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
