@@ -7,4 +7,12 @@
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MagicOnion" Version="4.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PataNext.MasterServer\STMasterServer.Shared\STMasterServer.Shared.csproj" />
+    </ItemGroup>
+
 </Project>

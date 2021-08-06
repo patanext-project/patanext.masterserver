@@ -1,9 +1,8 @@
-﻿using project;
-using project.DataBase.Ecs;
+﻿using project.DataBase.Ecs;
 
 namespace PataNext.MasterServer.Components.Account
 {
-	public struct DiscordAccount : IEntityComponent<UserEntity>
+	public struct DiscordAccount : IEntityComponent
 	{
 		public ulong Id;
 

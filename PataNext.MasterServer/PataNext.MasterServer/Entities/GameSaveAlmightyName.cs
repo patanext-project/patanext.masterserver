@@ -1,6 +1,8 @@
-﻿namespace PataNext.MasterServer.Entities
+﻿using project.DataBase.Ecs;
+
+namespace PataNext.MasterServer.Entities
 {
-	public struct GameSaveAlmightyName
+	public struct GameSaveAlmightyName : IEntityComponent
 	{
 		public string Value;
 

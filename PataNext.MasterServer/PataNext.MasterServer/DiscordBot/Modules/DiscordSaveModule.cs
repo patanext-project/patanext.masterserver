@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -6,8 +7,13 @@ using Discord.Commands;
 using GameHost.Core.Ecs;
 using GameHost.Injection;
 using PataNext.MasterServer.Components.Account;
+using PataNext.MasterServer.Components.Game.Presets.UnitPreset;
+using PataNext.MasterServer.Components.Game.Unit;
 using PataNext.MasterServer.Components.GameSave;
 using PataNext.MasterServer.Entities;
+using PataNext.MasterServer.Providers;
+using PataNext.MasterServer.Systems;
+using PataNext.MasterServer.Systems.Core;
 using project;
 using project.DataBase;
 
@@ -17,11 +23,19 @@ namespace PataNext.MasterServer.DiscordBot
 	[Group("save")]
 	public class DiscordSaveModule : ModuleBase<SocketCommandContext>
 	{
-		private readonly IEntityDatabase db;
+		private readonly IEntityDatabase  db;
+		private readonly UnitProvider     unitProvider;
+		private readonly UnitRoleSystem   roleSystem;
+		private readonly UnitPresetProfileSystem  unitProfileSystem;
+		private readonly GameSaveProvider gameSaveProvider;
 
-		public DiscordSaveModule(WorldCollection worldCollection)
+		public DiscordSaveModule(IEntityDatabase db, UnitProvider unitProvider, GameSaveProvider gameSaveProvider, UnitRoleSystem roleSystem, UnitPresetProfileSystem unitProfileSystem)
 		{
-			db = new ContextBindingStrategy(worldCollection.Ctx, true).Resolve<IEntityDatabase>();
+			this.db               = db;
+			this.unitProvider     = unitProvider;
+			this.gameSaveProvider = gameSaveProvider;
+			this.roleSystem       = roleSystem;
+			this.unitProfileSystem  = unitProfileSystem;
 		}
 
 		private Task GetUserErrorMessage(string task) => ReplyAsync($"**SAVE '{task.ToUpper()}' FAILED!**\nError when getting the user. You may not have an account created?");
@@ -48,9 +62,14 @@ namespace PataNext.MasterServer.DiscordBot
 				return;
 			}
 
-			var saveEntity = db.CreateEntity<GameSaveEntity>();
-			await saveEntity.ReplaceAsync(new GameSaveUserOwner(userEntity));
-			await saveEntity.ReplaceAsync(new GameSaveAlmightyName(mightyName));
+			var sw         = new Stopwatch();
+			sw.Start();
+			
+			var saveEntity = await gameSaveProvider.CreateSave(userEntity, mightyName);
+			
+			sw.Stop();
+			
+			await ReplyAsync($"Save {(DbEntityRepresentation<GameSaveEntity>) saveEntity} created! ({(int) sw.Elapsed.TotalMilliseconds} ms)");
 		}
 
 		public async Task Delete(string mightyName)
@@ -108,7 +127,11 @@ namespace PataNext.MasterServer.DiscordBot
 			embed.WithAuthor(Context.User);
 
 			var filter = await db.GetMatchFilter<GameSaveEntity>();
-			filter.ByField((GameSaveUserOwner c) => c.Entity, userEntity);
+			filter.IsFieldEqual((GameSaveUserOwner c) => c.Entity, userEntity);
+
+			DbEntityRepresentation<GameSaveEntity> favoriteSave = default;
+			if (await userEntity.HasAsync<UserFavoriteGameSave>())
+				favoriteSave = (await userEntity.GetAsync<UserFavoriteGameSave>()).Entity;
 
 			var saveList = await filter.RunAsync();
 			if (saveList.Count == 0)
@@ -122,21 +145,23 @@ namespace PataNext.MasterServer.DiscordBot
 				{
 					var mightyName = await saveEntity.GetAsync<GameSaveAlmightyName>();
 
+					var field = string.Empty;
+					field += $"`{db.RepresentationOf(saveEntity)}`\n";
+					if (favoriteSave == saveEntity)
+						field += $"⭐ Favorite Save\n";
+					embed.AddField(mightyName.Value, field, true);
+
 					var details = string.Empty;
-					details += $"Id\n";
 					details += $"Played Hours\n";
 					details += $"Raid Rank\n";
 					details += $"Avg Versus Rank\n";
-					embed.AddField(mightyName.Value, details, true);
+					embed.AddField("Stats Keys", details, true);
 
 					var result = string.Empty;
-					result += $"`{db.RepresentationOf(saveEntity)}`\n";
 					result += $"?\n";
 					result += $"0r (hasn't joined any raids)\n";
 					result += $"0p (hasn't played any VS)\n";
-					embed.AddField("Stats", result, true);
-
-					embed.AddField("<:patapeek:733019671569367202>", "║");
+					embed.AddField("Stats Values", result, true);
 				}
 			}
 
@@ -146,8 +171,8 @@ namespace PataNext.MasterServer.DiscordBot
 		private async Task<DbEntityKey<GameSaveEntity>> GetNamedSave(DbEntityKey<UserEntity> user, string almightyName)
 		{
 			var filter = await db.GetMatchFilter<GameSaveEntity>();
-			filter.ByField((GameSaveUserOwner c) => c.Entity, user);
-			filter.ByField((GameSaveAlmightyName c) => c.Value, almightyName);
+			filter.IsFieldEqual((GameSaveUserOwner    c) => c.Entity, user);
+			filter.IsFieldEqual((GameSaveAlmightyName c) => c.Value, almightyName);
 
 			return (await filter.RunAsync(1)).FirstOrDefault();
 		}
@@ -155,7 +180,7 @@ namespace PataNext.MasterServer.DiscordBot
 		private async Task<DbEntityKey<UserEntity>> GetCurrentUserEntity()
 		{
 			var filter = await db.GetMatchFilter<UserEntity>();
-			filter.ByField((DiscordAccount c) => c.Id, Context.User.Id);
+			filter.IsFieldEqual((DiscordAccount c) => c.Id, Context.User.Id);
 
 			return (await filter.RunAsync(1)).FirstOrDefault();
 		}

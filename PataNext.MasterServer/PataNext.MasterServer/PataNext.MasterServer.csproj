@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <LangVersion>9</LangVersion>
     </PropertyGroup>
 
@@ -14,7 +14,10 @@
 
     <ItemGroup>
       <Folder Include="Components\Game\Presets\ArmyPreset" />
-      <Folder Include="Components\Game\Unit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MagicOnion.Server.HttpGateway" Version="4.1.1" />
     </ItemGroup>
 
 </Project>

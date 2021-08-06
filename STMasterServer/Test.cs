@@ -4,6 +4,7 @@ using System.Text;
 using project.DataBase;
 using project.DataBase.Ecs;
 using RethinkDb.Driver.Net;
+using STMasterServer.Shared.Services.Authentication;
 using static RethinkDb.Driver.RethinkDB;
 
 namespace project
@@ -12,7 +13,7 @@ namespace project
 	{
 	}
 
-	public struct UserAccount : IEntityComponent<UserEntity>
+	public struct UserAccount : IEntityComponent
 	{
 		public string Login;
 		/// <summary>
@@ -25,23 +26,7 @@ namespace project
 
 		public void SetPassword(string clear)
 		{
-			Password = CreateMD5(clear);
-		}
-
-		private static string CreateMD5(string input)
-		{
-			// Use input string to calculate MD5 hash
-			using var md5        = MD5.Create();
-			var       inputBytes = Encoding.ASCII.GetBytes(input);
-			var       hashBytes  = md5.ComputeHash(inputBytes);
-
-			// Convert the byte array to hexadecimal string
-			var sb = new StringBuilder();
-			foreach (var t in hashBytes)
-			{
-				sb.Append(t.ToString("X2"));
-			}
-			return sb.ToString();
+			Password = StandardAuthUtility.CreateMD5(clear);
 		}
 	}
 

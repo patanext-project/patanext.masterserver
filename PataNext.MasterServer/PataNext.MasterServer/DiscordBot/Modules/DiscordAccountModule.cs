@@ -23,13 +23,24 @@ namespace PataNext.MasterServer.DiscordBot
 		{
 			db = new ContextBindingStrategy(worldCollection.Ctx, true).Resolve<IEntityDatabase>();
 		}
-		
+
 		[Command("info")]
 		[Summary("Get information about your account (or another account)")]
 		[Remarks("Sensitive information (eg: password, token) are excluded.")]
 		public async Task Info()
 		{
-			
+			var filter = await db.GetMatchFilter<UserEntity>();
+			filter.IsFieldEqual((DiscordAccount c) => c.Id, Context.User.Id);
+
+			var entityList = await filter.RunAsync();
+			if (entityList.Count == 0)
+			{
+				await ReplyAsync($"**You do not have an account.**\nCreate one with `&account create` or `&account create 'wanted login'`");
+				return;
+			}
+
+			var user = entityList.First();
+			await ReplyAsync($"**GUID** `{(DbEntityRepresentation<UserEntity>) user}`\n **Login** {(await user.GetAsync<UserAccount>()).Login}");
 		}
 
 		[Command("create")]
@@ -46,7 +57,7 @@ namespace PataNext.MasterServer.DiscordBot
 		public async Task Create(string wantedLogin)
 		{
 			var filter     = await db.GetMatchFilter<UserEntity>();
-			filter.ByField((DiscordAccount c) => c.Id, Context.User.Id);
+			filter.IsFieldEqual((DiscordAccount c) => c.Id, Context.User.Id);
 
 			var entityList = await filter.RunAsync();
 			if (entityList.Count == 0)
@@ -55,7 +66,7 @@ namespace PataNext.MasterServer.DiscordBot
 					wantedLogin = Context.User.Username;
 				;
 				if ((await filter.Reset()
-				                 .ByField((UserAccount c) => c.Login, wantedLogin)
+				                 .IsFieldEqual((UserAccount c) => c.Login, wantedLogin)
 				                 .RunAsync()).Count > 0)
 				{
 					await ReplyAsync($"**Account Creation Failed!**\nAn account with login `{wantedLogin}` already exist!");
@@ -94,7 +105,7 @@ namespace PataNext.MasterServer.DiscordBot
 		public async Task RegeneratePassword()
 		{ 
 			var entityList = await (await db.GetMatchFilter<UserEntity>())
-			                     .ByField((DiscordAccount c) => c.Id, Context.User.Id)
+			                     .IsFieldEqual((DiscordAccount c) => c.Id, Context.User.Id)
 			                     .RunAsync(1);
 			if (entityList.Count == 0)
 				return; // reply that we didn't found any account

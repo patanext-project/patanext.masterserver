@@ -25,6 +25,7 @@ namespace PataNext.MasterServer
 			bootstrap.GameEntity.Set(typeof(MasterServerApplication));
 
 			bootstrap.Global.Context.BindExisting<IEntityDatabase>(new RethinkDbDatabaseImpl(RethinkDB.R.Connection()
+			                                                                         //.Hostname("192.168.1.42")
 			                                                                         .Hostname("127.0.0.1")
 			                                                                         .Db("PataNext")
 			                                                                         .Connect()));
@@ -32,7 +33,7 @@ namespace PataNext.MasterServer
 			bootstrap.Setup();
 			while (bootstrap.Loop())
 			{
-				Thread.Sleep(10);
+				Thread.Sleep(5);
 			}
 		}
 	}

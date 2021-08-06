@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using PataNext.MasterServer.Components.Asset;
 using project.Core.Components;
 using project.Core.Entities;
 using project.DataBase;
@@ -17,15 +19,42 @@ namespace PataNext.MasterServer.DiscordBot
 
 		public IEntityDatabase db { get; set; }
 
+		private string[] cachedCategories;
+
 		[Command("browse")]
 		[Summary("Browse assets of a specific type")]
-		public async Task Browse(string assetType, int page = 0)
+		public async Task Browse(string assetType = "", int page = 0)
 		{
+			if (string.IsNullOrEmpty(assetType))
+			{
+				if (cachedCategories == null)
+				{
+					// heavy task, so do it only once
+					var allAssets = await (await db.GetMatchFilter<AssetEntity>())
+					                      .Has<AssetType>()
+					                      .RunAsync();
+
+					var set = new HashSet<string>();
+					foreach (var entity in allAssets)
+					{
+						set.Add((await entity.GetAsync<AssetType>()).Type);
+					}
+
+					cachedCategories = set.ToArray();
+				}
+
+				var str = "You did not specified a category! **Available categories**\n";
+				str += string.Join(", ", cachedCategories);
+
+				await ReplyAsync(str);
+				return;
+			}
+			
 			var entityList = await (await db.GetMatchFilter<AssetEntity>())
 			                       .Has<AssetType>()
 			                       .Has<AssetName>()
 			                       .Has<AssetPointer>()
-			                       .ByField((AssetType c) => c.Type, assetType)
+			                       .IsFieldEqual((AssetType c) => c.Type, assetType)
 			                       .RunAsync();
 			if (entityList.Count == 0)
 			{
@@ -59,7 +88,7 @@ namespace PataNext.MasterServer.DiscordBot
 		{
 			var sw = new Stopwatch();
 			sw.Start();
-			
+
 			DbEntityKey<AssetEntity> asset;
 			if (string.IsNullOrEmpty(mod))
 			{
@@ -68,9 +97,9 @@ namespace PataNext.MasterServer.DiscordBot
 			else
 			{
 				asset = (await (await db.GetMatchFilter<AssetEntity>())
-				               .ByField((AssetPointer ptr) => ptr.Author, hashOrAuthor)
-				               .ByField((AssetPointer ptr) => ptr.Mod, mod)
-				               .ByField((AssetPointer ptr) => ptr.Id, nameId)
+				               .IsFieldEqual((AssetPointer ptr) => ptr.Author, hashOrAuthor)
+				               .IsFieldEqual((AssetPointer ptr) => ptr.Mod, mod)
+				               .IsFieldEqual((AssetPointer ptr) => ptr.Id, nameId)
 				               .RunAsync(1)).FirstOrDefault();
 			}
 
@@ -100,6 +129,40 @@ namespace PataNext.MasterServer.DiscordBot
 			var pointer = await asset.GetAsync<AssetPointer>();
 			embed.AddField("Author", pointer.Author, true);
 			embed.AddField("Mod Source", pointer.Mod, true);
+			if (await asset.HasAsync<AssetType>())
+				embed.AddField("Category", (await asset.GetAsync<AssetType>()).Type, true);
+
+			if (await asset.HasAsync<AssetKitData>())
+			{
+				var kitData = await asset.GetAsync<AssetKitData>();
+				var roleStr = string.Empty;
+				foreach (var roleRepresentation in kitData.Roles)
+				{
+					var roleName = (await roleRepresentation.ToEntity(db)
+					                                        .GetAsync<AssetName>()).Value;
+					roleStr += $"{roleName} ➖ `{roleRepresentation.Value}` \n";
+				}
+
+				embed.AddField("Roles", roleStr);
+			}
+
+			if (await asset.HasAsync<AssetRoleData>())
+			{
+				var roleData        = await asset.GetAsync<AssetRoleData>();
+				var allowedEquipStr = string.Empty;
+				foreach (var (keyEntity, valueEntities) in roleData.AllowedEquipments)
+				{
+					allowedEquipStr += $"{(await keyEntity.ToEntity(db).GetAsync<AssetName>()).Value} **[**\n```";
+					foreach (var valueEntity in valueEntities)
+					{
+						allowedEquipStr += $"  {(await valueEntity.ToEntity(db).GetAsync<AssetName>()).Value}\n";
+					}
+					allowedEquipStr += "```**]**\n";
+				}
+
+				embed.AddField("Equipments", allowedEquipStr);
+			}
+
 			embed.AddField("Name Id", pointer.Id);
 			// TODO: Return an icon of the asset
 			embed.WithAuthor($"Asset Hash {db.RepresentationOf(asset)}", Context.User.GetAvatarUrl());

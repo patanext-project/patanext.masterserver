@@ -1,9 +1,8 @@
-﻿using project.Core.Entities;
-using project.DataBase.Ecs;
+﻿using project.DataBase.Ecs;
 
 namespace project.Core.Components
 {
-	public struct AssetType : IEntityComponent<AssetEntity>
+	public struct AssetType : IEntityComponent
 	{
 		public string Type;
 

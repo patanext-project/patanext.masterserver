@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>STMasterServer</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>9</LangVersion>
@@ -26,7 +26,7 @@
       <PackageReference Include="Grpc" Version="2.31.0" />
       <PackageReference Include="Grpc.Auth" Version="1.22.0" />
       <PackageReference Include="Grpc.Tools" Version="1.22.0" />
-      <PackageReference Include="MagicOnion" Version="3.0.13" />
+      <PackageReference Include="MagicOnion" Version="4.2.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0-preview6.19304.6" />
       <PackageReference Include="RethinkDb.Driver" Version="2.4.0-beta-1" />
       <PackageReference Include="StackExchange.Redis" Version="2.0.601" />

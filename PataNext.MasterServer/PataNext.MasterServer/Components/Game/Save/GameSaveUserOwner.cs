@@ -1,11 +1,10 @@
-﻿using PataNext.MasterServer.Entities;
-using project;
+﻿using project;
 using project.DataBase;
 using project.DataBase.Ecs;
 
 namespace PataNext.MasterServer.Components.GameSave
 {
-	public struct GameSaveUserOwner : IEntityComponent<GameSaveEntity>
+	public struct GameSaveUserOwner : IEntityComponent
 	{
 		public DbEntityRepresentation<UserEntity> Entity;
 

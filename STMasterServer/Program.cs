@@ -12,7 +12,7 @@ namespace project
 		public static async Task Main()
 		{
 			var db = new RethinkDbDatabaseImpl(RethinkDB.R.Connection()
-			                                            .Hostname("127.0.0.1")
+			                                            .Hostname("192.168.1.37")
 			                                            .Db("PataNext")
 			                                            .Connect());
 			

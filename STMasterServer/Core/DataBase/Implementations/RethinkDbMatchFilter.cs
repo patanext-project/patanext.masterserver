@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using RethinkDb.Driver;
 using RethinkDb.Driver.Ast;
 
 namespace project.DataBase.Implementations
@@ -31,6 +33,11 @@ namespace project.DataBase.Implementations
 			CurrentExpr = CurrentExpr.Filter(x => x.HasFields(typeof(TComponent).Name));
 		}
 
+		protected override void OnNone<TComponent>()
+		{
+			CurrentExpr = CurrentExpr.Filter(x => x.HasFields(typeof(TComponent).Name).Not());
+		}
+
 		protected override void OnByFields<TComponent, TField>(Dictionary<Expression<Func<TComponent, TField>>, TField> map)
 		{
 			foreach (var (expression, expected) in map)
@@ -44,10 +51,31 @@ namespace project.DataBase.Implementations
 				};
 			}
 		}
+		
+		protected override void OnByFieldsMultipleChoice<TComponent, TField>(Dictionary<Expression<Func<TComponent, TField>>, TField[]> map)
+		{
+			foreach (var (expression, expected) in map)
+			{
+				var memberInfo = ((MemberExpression) expression.Body).Member;
+
+				CurrentExpr = memberInfo switch
+				{
+					FieldInfo fieldInfo => CurrentExpr.Filter(x =>
+					{
+						return RethinkDB.R.Expr(expected.Select(f => (object) f!).ToArray()).Contains(x[typeof(TComponent).Name][fieldInfo.Name]);
+					}),
+					_ => throw new ArgumentOutOfRangeException(nameof(memberInfo))
+				};
+			}
+		}
 
 		public override async ValueTask<IReadOnlyList<DbEntityKey<TEntity>>> RunAsync(int limit = 0)
 		{
-			var list   = await CurrentExpr.RunResultAsync<List<RethinkDbDatabaseImpl.IdOnlyStruct>>(Impl.Connection);
+			var expr = CurrentExpr;
+			if (limit > 0)
+				expr = expr.Limit(limit);
+
+			var list   = await expr.RunResultAsync<List<RethinkDbDatabaseImpl.IdOnlyStruct>>(Impl.Connection);
 			var range  = Math.Min(limit <= 0 ? list.Count : limit, list.Count);
 			var result = new DbEntityKey<TEntity>[range];
 
